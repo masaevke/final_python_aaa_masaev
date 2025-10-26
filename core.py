@@ -2,7 +2,7 @@ import requests
 from laureates_configs import process_persons, process_orgs
 
 # URL API Нобелевской премии
-URL_LAUREATES = "https://api.nobelprize.org/2.1/laureates"
+URL_LAUREATES = "https://api.nobelprize.org/2.1/laureates?limit=1200"
 
 
 def get_laureate_data(laureate: dict) -> dict:
