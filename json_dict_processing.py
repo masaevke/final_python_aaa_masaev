@@ -5,6 +5,14 @@ def extract_nested_value(obj: Any, keys: List[str], none: Any = None) -> Any:
     """
     функция измлекает значение из вложенного словаря/списка по цепочке ключей,
     если путь не существует — возвращает none.
+
+    Args:
+        obj: исходный объект
+        keys: список ключей или индексов для последовательного доступа
+        none: значение, возвращаемое при отсутствии пути
+
+    Returns:
+        значение по указанному пути или none
     """
     current = obj
     for key in keys:
@@ -25,7 +33,16 @@ def process_dictionary_with_config(
     dictionary: Dict, config: Dict[str, Union[List[str], Tuple[List[str], Callable]]]
 ) -> Dict[str, Any]:
     """
-    функция обрабатывает один словарь согласно {атрибут: path_list} или {атрибут: (path_list, transform_func)}
+    функция обрабатывает словарь 
+
+    Args:
+        dictionary: входной словарь с вложенными данными
+        config: конфигурация вида:
+                - {атрибут: [путь, к, данным]} — без трансформации,
+                - {атрибут: ([путь, к, данным], обработка)} — с трансформацией
+
+    Returns:
+        плоский словарь с извлечёнными и преобразованными значениями
     """
     result = {}
     for attr_name, spec in config.items():
@@ -48,7 +65,16 @@ def process_list_of_dicts_with_config(
     list_of_dicts: List[Dict],
     config: Dict[str, Union[List[str], Tuple[List[str], Callable]]],
 ) -> List[Dict[str, Any]]:
-    """обработка списка словарей"""
+    """
+    обработка списка словарей
+    
+    Args:
+        list_of_dicts: список словарей для обработки
+        config: конфигурация извлечения и преобразования полей
+
+    Returns:
+        список плоских обработанныхз словарей
+    """
     return [process_dictionary_with_config(item, config) for item in list_of_dicts]
 
 
@@ -58,9 +84,14 @@ def create_processor(
 ) -> Callable:
     """
     создает готовый процессор с предзагруженной конфигурацией.
-    В случае, если list_processor == True,
-    внутрь процессора подается process_list_of_dicts_with_config,
-    иначе process_dictionary_with_config.
+
+    Args:
+        config: конфигурация обработки полей
+        list_processor: если True - процессор принимает список словарей
+                        если False — один словарь
+
+    Returns:
+        функция-процессор, принимающая данные и возвращающая результат
     """
     if list_processor:
         return lambda data_list: process_list_of_dicts_with_config(data_list, config)
