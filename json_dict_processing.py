@@ -50,3 +50,26 @@ def process_list_of_dicts_with_config(
 ) -> List[Dict[str, Any]]:
     """обработка списка словарей"""
     return [process_dictionary_with_config(item, config) for item in list_of_dicts]
+
+
+def create_processor(
+    config: Dict[str, Union[List[str], Tuple[List[str], Callable]]],
+    list_processor: bool = False,
+) -> Callable:
+    """
+    создает готовый процессор с предзагруженной конфигурацией.
+    В случае, если list_processor == True,
+    внутрь процессора подается process_list_of_dicts_with_config,
+    иначе process_dictionary_with_config.
+    """
+    if list_processor:
+
+        def processor(data_list: List[Dict]) -> List[Dict[str, Any]]:
+            return process_list_of_dicts_with_config(data_list, config)
+
+    else:
+
+        def processor(data_dict: Dict) -> Dict[str, Any]:
+            return process_dictionary_with_config(data_dict, config)
+
+    return processor
