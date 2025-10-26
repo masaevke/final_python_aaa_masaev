@@ -42,3 +42,11 @@ def process_dictionary_with_config(
         else:
             result[attr_name] = extract_nested_value(dictionary, spec)
     return result
+
+
+def process_list_of_dicts_with_config(
+    list_of_dicts: List[Dict],
+    config: Dict[str, Union[List[str], Tuple[List[str], Callable]]],
+) -> List[Dict[str, Any]]:
+    """обработка списка словарей"""
+    return [process_dictionary_with_config(item, config) for item in list_of_dicts]
