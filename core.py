@@ -28,7 +28,7 @@ def get_laureate_data(laureate: dict) -> dict:
     return processed
 
 
-def load_processed_data():
+def load_data():
     """
     функция загружает и возвращает список обработанных лауреатов для ноутбука
     """
