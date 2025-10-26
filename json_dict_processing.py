@@ -19,3 +19,26 @@ def extract_nested_value(obj: Any, keys: List[str], none: Any = None) -> Any:
         else:
             return none
     return current
+
+
+def process_dictionary_with_config(
+    dictionary: Dict, config: Dict[str, Union[List[str], Tuple[List[str], Callable]]]
+) -> Dict[str, Any]:
+    """
+    функция обрабатывает один словарь согласно {атрибут: path_list} или {атрибут: (path_list, transform_func)}
+    """
+    result = {}
+    for attr_name, spec in config.items():
+        if isinstance(spec, tuple):
+            path_list, transform = spec
+            raw_value = extract_nested_value(dictionary, path_list)
+            if raw_value is not None:
+                try:
+                    result[attr_name] = transform(raw_value)
+                except (ValueError, TypeError):
+                    result[attr_name] = None
+            else:
+                result[attr_name] = None
+        else:
+            result[attr_name] = extract_nested_value(dictionary, spec)
+    return result
