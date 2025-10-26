@@ -1,5 +1,5 @@
 import requests
-from laureates_configs import process_persons, process_orgs 
+from laureates_configs import process_persons, process_orgs
 
 # URL API Нобелевской премии
 URL_LAUREATES = "https://api.nobelprize.org/2.1/laureates"
@@ -8,7 +8,7 @@ URL_LAUREATES = "https://api.nobelprize.org/2.1/laureates"
 def get_laureate_data(laureate: dict) -> dict:
     """
     Определяет тип лауреата и соотв образом обрабатывает данные.
-    
+
     Args:
         laureate: Dictionary with laureate data
 
@@ -28,6 +28,17 @@ def get_laureate_data(laureate: dict) -> dict:
     return processed
 
 
+def load_processed_data():
+    """
+    функция загружает и возвращает список обработанных лауреатов для ноутбука
+    """
+    response = requests.get(URL_LAUREATES)
+    response.raise_for_status()
+    raw = response.json()
+    return [get_laureate_data(l) for l in raw["laureates"]]
+
+
+# для запуска из терминала
 def main():
     print("Выгрузка данных из АПИ о лауреатах...")
     laureates_response = requests.get(URL_LAUREATES)
@@ -37,13 +48,13 @@ def main():
     print(f"Выгружено из АПИ {len(laureates['laureates'])} записей о лауретах")
 
     laureates_data = []
-    for laureate in laureates['laureates']:
+    for laureate in laureates["laureates"]:
         processed = get_laureate_data(laureate)
         laureates_data.append(processed)
 
     print(f"Обработано {len(laureates_data)} записей о лауреатах")
 
-    #выведу первых 2-х
+    # выведу первых 2-х
     for i, item in enumerate(laureates_data[:2]):
         print(f"\nЛауреат {i+1}")
         print(item)
