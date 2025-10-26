@@ -1,6 +1,7 @@
 import statistics
 from typing import List, Any, Dict, Tuple
 from operator import itemgetter
+from collections import Counter
 
 
 def mean(values: List[Any]) -> float:
@@ -75,3 +76,51 @@ def describe_numeric(values: List[Any]) -> Dict[str, Any]:
         "max": max(clean_values),
         "std": statistics.stdev(clean_values) if len(clean_values) > 1 else 0,
     }
+
+
+def print_laureates_analysis(laureates_data: List[Dict]) -> None:
+    """
+    Общая инфа
+    """
+    print(f"Всего лауреатов: {count(laureates_data)}")
+
+    unique_laureates_count = unique_count(laureates_data)
+    print(f"Количество уникальных записей: {unique_laureates_count}")
+
+    all_prizes = []
+    for item in laureates_data:
+        all_prizes.extend(item.get("prizes_relevant", []))
+
+    top_categories = top_n(all_prizes, "category_en", n=5)
+    print("\nТоп-5 категорий призов:")
+    for cat, cnt in top_categories:
+        print(f"  {cat}: {cnt}")
+
+    all_years = [
+        p.get("award_year") for p in all_prizes if p.get("award_year") is not None
+    ]
+    year_stats = describe_numeric(all_years)
+    print(f"\nСтатистики по годам награждения:")
+    for k, v in year_stats.items():
+        print(f"  {k}: {v}")
+
+    prizes_per_laureate = [
+        len(item.get("prizes_relevant", [])) for item in laureates_data
+    ]
+    avg_prizes = mean(prizes_per_laureate)
+    print(f"\nСреднее количество призов на лауреата: {avg_prizes:.2f}")
+
+    med_prizes = median(prizes_per_laureate)
+    print(f"Медианное количество призов на лауреата: {med_prizes}")
+
+    try:
+        most_common_prize_count = mode(prizes_per_laureate)
+        print(
+            f"Наиболее частое количество призов на лауреата: {most_common_prize_count}"
+        )
+    except statistics.StatisticsError:
+        print("Наиболее частое количество призов: (множество модусов)")
+
+    types = [item.get("type_") for item in laureates_data]
+    type_counts = Counter(t for t in types if t)  # Фильтруем None
+    print(f"\nТипы лауреатов: {dict(type_counts)}")
