@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Tuple, Union
 
 
 def extract_nested_value(obj: Any, keys: List[str], none: Any = None) -> Any:
