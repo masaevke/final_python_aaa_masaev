@@ -63,13 +63,6 @@ def create_processor(
     иначе process_dictionary_with_config.
     """
     if list_processor:
-
-        def processor(data_list: List[Dict]) -> List[Dict[str, Any]]:
-            return process_list_of_dicts_with_config(data_list, config)
-
+        return lambda data_list: process_list_of_dicts_with_config(data_list, config)
     else:
-
-        def processor(data_dict: Dict) -> Dict[str, Any]:
-            return process_dictionary_with_config(data_dict, config)
-
-    return processor
+        return lambda data_dict: process_dictionary_with_config(data_dict, config)
